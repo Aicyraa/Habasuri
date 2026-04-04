@@ -1,31 +1,30 @@
 import matplotlib.pyplot as plt
-import pandas as pd
 from helper import graphs 
 
 def readyGraph(graph):
-   code = -1
+   code = 'Invalid'
    
    match graph:
       case 1:
          graphs.grph1()
-         code =   
+         code = 'Success'  
       case 2:
-         pass
+         graphs.grph2()
+         code = 'Success'  
       case 3:
-         pass
+         graphs.grph3()
+         code = 'Success'
       case 4:
-         pass
+         graphs.grph4()
+         code = 'Success'  
       case 5:
-         pass
-      case _:
-         code = 'Invalid'
-   
+         code = 'Success'  
    return code
 
 def renderGraph(graph):
    code = readyGraph(graph)
-   plt.clf()
-   plt.savefig('./image_graph/')
+   plt.savefig(f'./image_graph/graph_{graph}.png')
+   plt.close()
    return code
 
 if __name__ == "__main__": 
@@ -38,7 +37,7 @@ if __name__ == "__main__":
                (2) Yearly Patterns      
                (3) El Nino Impact of typoons      
                (4) Matrix of all numeric columns      
-            Customize (5)
+            (5) Customize 
             (0) Exit
       ''')
 
