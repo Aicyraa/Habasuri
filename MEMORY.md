@@ -1,0 +1,1 @@
+- [Typhoon data analysis project](memory/project_typhoon_analysis.md) — Simple matplotlib/numpy/pandas analysis of Philippines typhoon CSV with column descriptions
