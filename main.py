@@ -1,34 +1,30 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 from helper import graphs 
 
 def readyGraph(graph):
-   code = 'Invalid'
-   
    match graph:
       case 1:
          graphs.grph1()
-         code = 'Success'  
+         return graph
       case 2:
          graphs.grph2()
-         code = 'Success'  
+         return graph
       case 3:
          graphs.grph3()
-         code = 'Success'
+         return graph
       case 4:
          graphs.grph4()
-         code = 'Success'  
+         return graph
       case 5:
-         code = 'Success'  
-   return code
+         return graphs.customGraph()
 
 def renderGraph(graph):
    code = readyGraph(graph)
-   plt.savefig(f'./image_graph/graph_{graph}.png')
+   plt.savefig(f'./image_graph/graph_{code}.png')
    plt.close()
-   return code
 
-if __name__ == "__main__": 
-   
+if __name__ == "__main__":
    while True:
       print(f'''
          What would you like to see today?
@@ -50,4 +46,3 @@ if __name__ == "__main__":
          graphCode = renderGraph(graphChoice)
          print(f'>> {graphCode}')
          print('-'*40)
-

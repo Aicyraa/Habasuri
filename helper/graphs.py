@@ -32,7 +32,7 @@ def grph3():
    """El Nino Impact - Scatter plot of ENSO vs typhoon frequency"""
    df = getData()
 
-   plt.figure(figsize=(10, 6))
+   plt.figure(figsize=(10, 6))   
    plt.scatter(df['Nino3.4_SST_anomaly'], df['Number_of_Typhoons'], color='darkgreen', alpha=0.7, s=df['Number_of_Typhoons']*30)
    plt.xlabel('Nino3.4 SST Anomaly (°C)')
    plt.ylabel('Number of Typhoons')
@@ -64,3 +64,47 @@ def grph4():
 
    plt.tight_layout()
    return plt
+
+# Customize Graph Section
+
+def renderGraph(x, y, graph, title):
+   df = getData()
+   hori = df.iloc[:, [x - 1]]
+   verti = df.iloc[:, [y - 1]]
+   plt.title(title)   
+      
+   if graph == 1: plt.plot(hori, verti)
+   elif graph == 2: plt.scatter(hori, verti)
+   elif graph == 3: plt.hist(hori, verti)
+   elif graph == 4: plt.bar(hori, verti)
+   else: return ValueError('Invalid Graph!')
+   
+def customGraph(): 
+   ''' Customize Graph '''
+   # Show the data and make the user select (2 value)
+   # Select the type of graph the user wants (plot, scatter, hist, bar, heat)
+   # customize the grapth (title, color, figure, ticks, label)
+   print(f'''
+      Choose you x axis and y axis
+      (1) Year              (7) Vertical_Wind_Shear
+      (2) Month             (8)Midlevel_Humidity,
+      (3) No. of Typhoons   (9) SeaLevelPressure
+      (4) ONI               (10) MJO_Phase
+      (5) Nino3.4           (11) Prev_month_typhoons
+      (6) West_Pacific_SST                
+   ''')
+   
+   x = int(input('x > ')) 
+   y = int(input('y > ')) 
+   
+   print(f'''
+      Choose your graph.
+      (1) Line        (3) Hist      
+      (2) Scatter     (4) Bar     
+   ''')
+   
+   graph = int(input('Graph > ')) 
+   title = input('Title > ')
+   renderGraph(x, y, graph, title)
+   return title
+   
