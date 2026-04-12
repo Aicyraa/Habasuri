@@ -67,44 +67,155 @@ def grph4():
 
 # Customize Graph Section
 
-def renderGraph(x, y, graph, title):
+DATA_COLUMNS = [
+   (1, 'Year'),
+   (2, 'Month'),
+   (3, 'No. of Typhoons'),
+   (4, 'ONI'),
+   (5, 'Nino3.4'),
+   (6, 'West_Pacific_SST'),
+   (7, 'Vertical_Wind_Shear'),
+   (8, 'Midlevel_Humidity'),
+   (9, 'SeaLevelPressure'),
+   (10, 'MJO_Phase'),
+   (11, 'Prev_month_typhoons')
+]
+
+GRAPH_TYPES = {
+   1: ('line', 'Line'),
+   2: ('scatter', 'Scatter'),
+   3: ('bar', 'Bar'),
+   4: ('hist', 'Histogram')
+}
+
+COLOR_OPTIONS = [
+   (1, 'steelblue'),
+   (2, 'coral'),
+   (3, 'darkgreen'),
+   (4, 'crimson'),
+   (5, 'purple'),
+   (6, 'orange'),
+   (7, 'teal'),
+   (8, 'navy'),
+   (9, 'maroon'),
+   (10, 'olive')
+]
+
+def renderGraph(x, y, graph_type, title, color='steelblue', figsize=(10, 6),
+                xlabel=None, ylabel=None, xticks=None, yticks=None, grid=False):
+   """Render a customizable graph with user-specified options."""
    df = getData()
-   hori = df.iloc[:, [x - 1]]
-   verti = df.iloc[:, [y - 1]]
-   plt.title(title)   
-      
-   if graph == 1: plt.plot(hori, verti)
-   elif graph == 2: plt.scatter(hori, verti)
-   elif graph == 3: plt.hist(hori, verti)
-   elif graph == 4: plt.bar(hori, verti)
-   else: return ValueError('Invalid Graph!')
-   
-def customGraph(): 
-   ''' Customize Graph '''
-   # Show the data and make the user select (2 value)
-   # Select the type of graph the user wants (plot, scatter, hist, bar, heat)
-   # customize the grapth (title, color, figure, ticks, label)
-   print(f'''
-      Choose you x axis and y axis
-      (1) Year              (7) Vertical_Wind_Shear
-      (2) Month             (8)Midlevel_Humidity,
-      (3) No. of Typhoons   (9) SeaLevelPressure
-      (4) ONI               (10) MJO_Phase
-      (5) Nino3.4           (11) Prev_month_typhoons
-      (6) West_Pacific_SST                
-   ''')
-   
-   x = int(input('x > ')) 
-   y = int(input('y > ')) 
-   
-   print(f'''
-      Choose your graph.
-      (1) Line        (3) Hist      
-      (2) Scatter     (4) Bar     
-   ''')
-   
-   graph = int(input('Graph > ')) 
-   title = input('Title > ')
-   renderGraph(x, y, graph, title)
+   x_col = df.columns[x - 1]
+   y_col = df.columns[y - 1]
+   hori = df[x_col]
+   verti = df[y_col]
+
+   plt.figure(figsize=figsize)
+
+   if graph_type == 'line':
+      plt.plot(hori, verti, color=color, linewidth=2)
+   elif graph_type == 'scatter':
+      plt.scatter(hori, verti, color=color, alpha=0.7, s=50)
+   elif graph_type == 'bar':
+      plt.bar(hori.astype(str), verti, color=color)
+   elif graph_type == 'hist':
+      plt.hist(verti, bins=10, color=color, edgecolor='black')
+   else:
+      raise ValueError(f'Invalid graph type: {graph_type}')
+
+   plt.title(title, fontsize=14, fontweight='bold')
+   plt.xlabel(xlabel or x_col, fontsize=11)
+   plt.ylabel(ylabel or y_col, fontsize=11)
+
+   if xticks:
+      plt.xticks(xticks)
+   if yticks:
+      plt.yticks(yticks)
+   if grid:
+      plt.grid(True, alpha=0.3)
+
+   plt.tight_layout()
+   return plt
+
+def customGraph():
+   '''Create a fully customizable graph with user-specified options.'''
+
+   # Step 1: Select X and Y axis
+   print('\n' + '='*50)
+   print('SELECT X AND Y AXIS')
+   print('='*50)
+   for i, (num, name) in enumerate(DATA_COLUMNS):
+      if i % 2 == 0:
+         print(f'   ({num}) {name:<25}', end='')
+      else:
+         print(f'({num}) {name}')
+   print()
+
+   x = int(input('X-axis column (1-11) > '))
+   y = int(input('Y-axis column (1-11) > '))
+
+   # Step 2: Select graph type
+   print('\n' + '='*50)
+   print('SELECT GRAPH TYPE')
+   print('='*50)
+   for num, (key, name) in GRAPH_TYPES.items():
+      print(f'   ({num}) {name}')
+   print()
+
+   graph_choice = int(input('Graph type (1-4) > '))
+   graph_type = GRAPH_TYPES.get(graph_choice, ('line', 'Line'))[0]
+
+   # Step 3: Select color
+   print('\n' + '='*50)
+   print('SELECT COLOR')
+   print('='*50)
+   for num, color in COLOR_OPTIONS:
+      print(f'   ({num}) {color}')
+   print('   (0) Custom (enter hex/name)')
+   print()
+
+   color_choice = int(input('Color (0-10) > '))
+   if color_choice == 0:
+      color = input('Enter color name or hex code > ')
+   else:
+      color = COLOR_OPTIONS[color_choice - 1][1]
+
+   # Step 4: Customize title and labels
+   print('\n' + '='*50)
+   print('TITLE AND LABELS')
+   print('='*50)
+   title = input(f'Graph title [default: "{DATA_COLUMNS[x-1][1]} vs {DATA_COLUMNS[y-1][1]}"] > ')
+   if not title:
+      title = f'{DATA_COLUMNS[x-1][1]} vs {DATA_COLUMNS[y-1][1]}'
+
+   xlabel = input(f'X-axis label [default: {DATA_COLUMNS[x-1][1]}] > ')
+   ylabel = input(f'Y-axis label [default: {DATA_COLUMNS[y-1][1]}] > ')
+
+   # Step 5: Advanced options
+   print('\n' + '='*50)
+   print('ADVANCED OPTIONS')
+   print('='*50)
+
+   figsize_input = input('Figure size (width,height) [default: 10,6] > ')
+   if figsize_input:
+      try:
+         figsize = tuple(map(int, figsize_input.split(',')))
+      except ValueError:
+         figsize = (10, 6)
+   else:
+      figsize = (10, 6)
+
+   grid_input = input('Show grid? (y/n) [default: n] > ').lower()
+   grid = grid_input == 'y'
+
+   xticks_input = input('Custom X-ticks (comma-separated, optional) > ')
+   xticks = [int(v.strip()) for v in xticks_input.split(',')] if xticks_input else None
+
+   yticks_input = input('Custom Y-ticks (comma-separated, optional) > ')
+   yticks = [int(v.strip()) for v in yticks_input.split(',')] if yticks_input else None
+
+   # Render the graph
+   renderGraph(x, y, graph_type, title, color, figsize, xlabel, ylabel, xticks, yticks, grid)
+
    return title
    
